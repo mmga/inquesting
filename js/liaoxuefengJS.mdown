@@ -7,4 +7,49 @@
 
 第二种是`===`比较，它不会自动转换数据类型，如果数据类型不一致，返回false，如果一致，再比较。  
 
-** 由于JavaScript这个设计缺陷，不要使用`==`比较，始终坚持使用`===`比较。**  
+** 由于JavaScript这个设计缺陷，不要使用`==`比较，始终坚持使用`===`比较。** 
+
+#### 条件判断
+JavaScript把null、undefined、0、NaN和空字符串''视为false，其他值一概视为true。 
+
+#### 循环
+for in  
+```javascript
+var o = {
+    name: 'Jack',
+    age: 20,
+    city: 'Beijing'
+};
+for (var key in o) {
+    if (o.hasOwnProperty(key)) {
+        alert(key); // 'name', 'age', 'city'
+    }
+}```
+
+#### Map和Set
+##### Set 
+Set和Map类似，也是一组key的集合，但不存储value。由于key不能重复，所以，在Set中，没有重复的key。
+
+#### iterable
+你可能会有疑问，`for ... of`循环和`for ... in`循环有何区别？
+
+`for ... in`循环由于历史遗留问题，它遍历的实际上是对象的属性名称。一个`Array`数组实际上也是一个对象，它的每个元素的索引被视为一个属性。
+
+当我们手动给`Array`对象添加了额外的属性后，`for ... in`循环将带来意想不到的意外效果：
+
+```javascript
+var a = ['A', 'B', 'C'];
+a.name = 'Hello';
+for (var x in a) {
+    alert(x); // '0', '1', '2', 'name'
+}```
+
+`for ... in`循环将把name包括在内，但`Array`的`length`属性却不包括在内。  
+
+`for ... of`循环则完全修复了这些问题，它只循环集合本身的元素：  
+```javascript
+var a = ['A', 'B', 'C'];
+a.name = 'Hello';
+for (var x of a) {
+    alert(x); 'A', 'B', 'C'
+}```
