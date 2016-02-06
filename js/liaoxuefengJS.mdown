@@ -24,7 +24,9 @@ for (var key in o) {
     if (o.hasOwnProperty(key)) {
         alert(key); // 'name', 'age', 'city'
     }
-}```
+}
+```
+
 
 #### Map和Set
 ##### Set 
@@ -42,7 +44,8 @@ var a = ['A', 'B', 'C'];
 a.name = 'Hello';
 for (var x in a) {
     alert(x); // '0', '1', '2', 'name'
-}```
+}
+```
 
 `for ... in`循环将把name包括在内，但`Array`的`length`属性却不包括在内。  
 
@@ -52,4 +55,5 @@ var a = ['A', 'B', 'C'];
 a.name = 'Hello';
 for (var x of a) {
     alert(x); 'A', 'B', 'C'
-}```
+}
+```
