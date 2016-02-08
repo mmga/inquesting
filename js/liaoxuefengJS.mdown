@@ -57,3 +57,34 @@ for (var x of a) {
     alert(x); 'A', 'B', 'C'
 }
 ```
+
+
+### 函数定义和调用
+
+#### 小心你的return语句
+前面我们讲到了JavaScript引擎有一个在行末自动添加分号的机制，这可能让你栽到return语句的一个大坑：  
+```javascript
+function foo() {
+    return { name: 'foo' };
+}
+
+foo(); // { name: 'foo' }
+```
+如果把return语句拆成两行：  
+```javascript
+function foo() {
+    return
+        { name: 'foo' };
+}
+
+foo(); // undefined
+```
+要小心了，由于JavaScript引擎在行末自动添加分号的机制，上面的代码实际上变成了：  
+
+```javascript
+function foo() {
+    return; // 自动添加了分号，相当于return undefined;
+        { name: 'foo' }; // 这行语句已经没法执行到了
+}
+```
+
