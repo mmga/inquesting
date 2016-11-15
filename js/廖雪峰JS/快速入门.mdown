@@ -1,5 +1,8 @@
 
-#### 数据类型
+#### 数据类型和变量
+
+JavaScript不区分整数和浮点数，统一用Number表示  
+
 `NaN; // NaN表示Not a Number，当无法计算结果时用NaN表示 ` 
 
 
@@ -8,6 +11,46 @@
 第二种是`===`比较，它不会自动转换数据类型，如果数据类型不一致，返回false，如果一致，再比较。  
 
 ** 由于JavaScript这个设计缺陷，不要使用`==`比较，始终坚持使用`===`比较。** 
+
+#### 字符串
+
+字符串是不可变的，如果对字符串的某个索引赋值，不会有任何错误，但是，也没有任何效果
+
+** 模版字符串** 
+```javascript
+var name = '小明';
+var age = 20;
+var message = `你好, ${name}, 你今年${age}岁了!`;
+alert(message);
+```
+注意是`` 不是''
+
+#### 数组  
+
+** slice **
+
+** push和pop ** 尾部添加删除   
+** unshift和shift ** 头部添加删除  
+
+** splice **
+```javascript
+//从索引2开始删除3个元素,然后再添加两个元素:
+arr.splice(2, 3, 'Google', 'Facebook'); 
+```
+  
+** concat  **
+连接  
+concat()方法并没有修改当前Array，而是返回了一个新的Array。
+
+** join **
+它把当前Array的每个元素都用指定的字符串连接起来，然后返回连接后的字符串  
+```javascript
+var arr = ['A', 'B', 'C', 1, 2, 3];
+arr.join('-'); // 'A-B-C-1-2-3'
+```
+
+#### 对象
+
 
 #### 条件判断
 JavaScript把null、undefined、0、NaN和空字符串''视为false，其他值一概视为true。 
@@ -27,14 +70,12 @@ for (var key in o) {
 }
 ```
 
-
-
-
 #### Map和Set
 ##### Set 
 Set和Map类似，也是一组key的集合，但不存储value。由于key不能重复，所以，在Set中，没有重复的key。
 
 #### iterable
+Array、Map和Set都属于iterable类型  
 你可能会有疑问，`for ... of`循环和`for ... in`循环有何区别？
 
 `for ... in`循环由于历史遗留问题，它遍历的实际上是对象的属性名称。一个`Array`数组实际上也是一个对象，它的每个元素的索引被视为一个属性。
@@ -60,35 +101,6 @@ for (var x of a) {
 }
 ```
 
-
-### 函数定义和调用
-
-#### 小心你的return语句
-前面我们讲到了JavaScript引擎有一个在行末自动添加分号的机制，这可能让你栽到return语句的一个大坑：  
-```javascript
-function foo() {
-    return { name: 'foo' };
-}
-
-foo(); // { name: 'foo' }
-```
-如果把return语句拆成两行：  
-```javascript
-function foo() {
-    return
-        { name: 'foo' };
-}
-
-foo(); // undefined
-```
-要小心了，由于JavaScript引擎在行末自动添加分号的机制，上面的代码实际上变成了：  
-
-```javascript
-function foo() {
-    return; // 自动添加了分号，相当于return undefined;
-        { name: 'foo' }; // 这行语句已经没法执行到了
-}
-```
 
 
 
