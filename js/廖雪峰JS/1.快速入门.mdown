@@ -10,7 +10,7 @@ JavaScript不区分整数和浮点数，统一用Number表示
 
 第二种是`===`比较，它不会自动转换数据类型，如果数据类型不一致，返回false，如果一致，再比较。  
 
-** 由于JavaScript这个设计缺陷，不要使用`==`比较，始终坚持使用`===`比较。** 
+**由于JavaScript这个设计缺陷，不要使用`==`比较，始终坚持使用`===`比较。** 
 
 #### 字符串
 
@@ -27,22 +27,22 @@ alert(message);
 
 #### 数组  
 
-** slice **
+**slice**
 
-** push和pop ** 尾部添加删除   
-** unshift和shift ** 头部添加删除  
+**push和pop** 尾部添加删除   
+**unshift和shift** 头部添加删除  
 
-** splice **
+**splice**
 ```javascript
 //从索引2开始删除3个元素,然后再添加两个元素:
 arr.splice(2, 3, 'Google', 'Facebook'); 
 ```
   
-** concat  **
+**concat**
 连接  
 concat()方法并没有修改当前Array，而是返回了一个新的Array。
 
-** join **
+**join**
 它把当前Array的每个元素都用指定的字符串连接起来，然后返回连接后的字符串  
 ```javascript
 var arr = ['A', 'B', 'C', 1, 2, 3];
