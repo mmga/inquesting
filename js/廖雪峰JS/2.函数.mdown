@@ -1,5 +1,63 @@
 ### 函数定义和调用
 
+```javascript
+function abs(x) {
+    if (x >= 0) {
+        return x;
+    } else {
+        return -x;
+    }
+}
+```
+
+```javascript
+var abs = function (x) {
+    if (x >= 0) {
+        return x;
+    } else {
+        return -x;
+    }
+};
+```
+在这种方式下，`function (x) { ... }`是一个匿名函数，它没有函数名。但是，这个匿名函数赋值给了变量abs，所以，通过变量abs就可以调用该函数。
+
+**arguments**
+它只在函数内部起作用，并且永远指向当前函数的调用者传入的所有参数
+```js
+// foo(a[, b], c)
+// 接收2~3个参数，b是可选参数，如果只传2个参数，b默认为null：
+function foo(a, b, c) {
+    if (arguments.length === 2) {
+        // 实际拿到的参数是a和b，c为undefined
+        c = b; // 把b赋给c
+        b = null; // b变为默认值
+    }
+    // ...
+}
+```
+
+**rest**
+```js
+function foo(a, b, ...rest) {
+    console.log('a = ' + a);
+    console.log('b = ' + b);
+    console.log(rest);
+}
+
+foo(1, 2, 3, 4, 5);
+// 结果:
+// a = 1
+// b = 2
+// Array [ 3, 4, 5 ]
+
+foo(1);
+// 结果:
+// a = 1
+// b = undefined
+// Array []
+```
+多余的参数以数组形式交给变量rest  
+
 #### 小心你的return语句
 前面我们讲到了JavaScript引擎有一个在行末自动添加分号的机制，这可能让你栽到return语句的一个大坑：  
 ```javascript
