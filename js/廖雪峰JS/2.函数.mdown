@@ -313,3 +313,6 @@ function (x) {
 ```
 
 ### generator
+一个generator看上去像一个函数，但可以返回多次
+
+
