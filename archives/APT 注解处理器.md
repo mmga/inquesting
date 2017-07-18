@@ -177,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
 点击 make project 可以在 app 的 build build/generated/source/apt 看到生成的代码。
 
-更多栗子
+更多栗子  
+[Demo](https://github.com/mmga/AnnotationProcessorDemo)
+
 [通过 annotation processor 生成弹出 Toast](https://github.com/mmga/AnnotationProcessorDemo/blob/master/compiler/src/main/java/com/example/ToastProcessor.java)
 
 参考资料 
