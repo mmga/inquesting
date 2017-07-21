@@ -245,13 +245,147 @@ case ACTIVITY:
 ```
 
 ### 拦截器
-（未完待续）
+**基本用法**  
+
+写一个 IInterceptor 的实现类注解 @Interceptor 并标明优先级，主要逻辑写在 process()方法中。
+```java
+@Interceptor(priority = 7)
+public class Test1Interceptor implements IInterceptor {
+    Context mContext;
+
+    @Override
+    public void process(final Postcard postcard, final InterceptorCallback callback) {
+        if ("/test/activity4".equals(postcard.getPath())) {
+            final AlertDialog.Builder ab = new AlertDialog.Builder(MainActivity.getThis());
+            ab.setTitle("温馨提醒");
+            ab.setMessage("想要跳转到Test4Activity么？(触发了\"/inter/test1\"拦截器，拦截了本次跳转)");
+            ab.setNegativeButton("继续", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    callback.onContinue(postcard);
+                }
+            });
+            ab.setNeutralButton("算了", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    callback.onInterrupt(null);
+                }
+            });
+            ab.setPositiveButton("加点料", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    postcard.withString("extra", "我是在拦截器中附加的参数");
+                    callback.onContinue(postcard);
+                }
+            });
+
+            MainLooper.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ab.create().show();
+                }
+            });
+        } else {
+            callback.onContinue(postcard);
+        }
+    }
+
+    @Override
+    public void init(Context context) {
+        mContext = context;
+        Log.e("testService", Test1Interceptor.class.getName() + " has init.");
+    }
+}
+```
+但是这样用有一个问题，就是判断哪些页面应该拦截哪些不拦截的任务落到了 interceptor 中，这就违背了高内聚（所有关于当前页面的配置写在当前页面中）的原则。所以某个 activity 如何标识出自己应不应该由某个拦截器拦截就成了一个问题。  
+这就用到了 @Router 注解中的 extra 参数,extra 是一个 int 值。  
+> 而为什么extras这个参数是int呢？其实是因为int本身在Java中是由4个字节实现的，每个字节是8位，所以一共是32个标志位，去除掉符号位还剩下31个，也就是说转化成为二进制之后，一个int中可以配置31个1或者0，而每一个0或者1都可以表示一项配置，这时候只需要从这31个位置中随便挑选出一个表示是否需要登录就可以了，只要将标志位置为1，就可以在刚才声明的拦截器中获取到这个标志位，通过位运算的方式判断目标页面是否需要登录
+
+
+
+
+
 ### 控制反转与服务
-（未完待续）
+（TODO）
 ### 运行期动态修改路由
-（未完待续）
+只要写一个类实现 PathReplaceService 接口就可以了。
+```java
+@Route(path = "/service/pathReplace")
+public class PathReplaceServiceImpl implements PathReplaceService {
+    @Override
+    public String forString(String path) {
+        if ("/test/activity2".equals(path)) {
+            return "/test/activity1";
+        } else {
+            return path;
+        }
+    }
+
+    @Override
+    public Uri forUri(Uri uri) {
+        return uri;
+    }
+
+    @Override
+    public void init(Context context) {
+
+    }
+}
+```
+forUri()是从外部通过URI的形式跳转到页面的时候会使用到的一个方法，参数中的URI就是原始的URI，而 forString() 是正常跳转中用到的路由地址。  
+
+这个功能的实现就是在 build 一个 Postcard 的时候查找有没有 PathReplaceService 的实现类，如果有就按照实现类中的逻辑改变 path 或 uri。
+```java
+protected Postcard build(String path) {
+        if (TextUtils.isEmpty(path)) {
+            throw new HandlerException(Consts.TAG + "Parameter is invalid!");
+        } else {
+            PathReplaceService pService = ARouter.getInstance().navigation(PathReplaceService.class);
+            if (null != pService) {
+                path = pService.forString(path);
+            }
+            return build(path, extractGroup(path));
+        }
+    }
+```
+
 ### 降级
-（未完待续）
+和动态改变路由类似，想要实现降级功能只要写一个 DegradeService 的实现类就可以了。  
+```java
+@Route(path = "/service/degrade")
+public class DegradeServiceImpl implements DegradeService {
+
+    @Override
+    public void init(Context context) {
+
+    }
+
+    @Override
+    public void onLost(Context context, Postcard postcard) {
+        ARouter.getInstance().build("/test/webview")
+                .withString("url", "https://yq.aliyun.com/articles/71687?spm=5176.100240.searchblog.7.5qkuq2")
+                .navigation();
+    }
+}
+``` 
+这里是统一跳转到 webview 页面打开某个错误提示页面。  
+这个功能的实现是在 navigation 时捕获失败，判断如果没有单独降级的 callback 则采用全局降级的逻辑。  
+```java
+try {
+            LogisticsCenter.completion(postcard);
+        } catch (NoRouteFoundException ex) {
+                       if (null != callback) {
+                callback.onLost(postcard);
+            } else {    // No callback for this invoke, then we use the global degrade service.
+                DegradeService degradeService = ARouter.getInstance().navigation(DegradeService.class);
+                if (null != degradeService) {
+                    degradeService.onLost(context, postcard);
+                }
+            }
+
+            return null;
+        }
+```        
 
 ---
 
